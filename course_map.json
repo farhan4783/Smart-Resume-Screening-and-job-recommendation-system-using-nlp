@@ -1,0 +1,84 @@
+{
+  "Python": [
+    {"platform": "Coursera", "title": "Python for Everybody", "url": "https://www.coursera.org/specializations/python"},
+    {"platform": "Udemy", "title": "Complete Python Bootcamp", "url": "https://www.udemy.com/course/complete-python-bootcamp/"}
+  ],
+  "SQL": [
+    {"platform": "Coursera", "title": "SQL for Data Science", "url": "https://www.coursera.org/learn/sql-for-data-science"},
+    {"platform": "Udemy", "title": "The Complete SQL Bootcamp", "url": "https://www.udemy.com/course/the-complete-sql-bootcamp/"}
+  ],
+  "Docker": [
+    {"platform": "Udemy", "title": "Docker & Kubernetes: The Practical Guide", "url": "https://www.udemy.com/course/docker-kubernetes-the-practical-guide/"},
+    {"platform": "Coursera", "title": "Containerized Applications on AWS", "url": "https://www.coursera.org/learn/containerized-apps-on-aws"}
+  ],
+  "Machine Learning": [
+    {"platform": "Coursera", "title": "Machine Learning Specialization - Andrew Ng", "url": "https://www.coursera.org/specializations/machine-learning-introduction"},
+    {"platform": "Udemy", "title": "Machine Learning A-Z", "url": "https://www.udemy.com/course/machinelearning/"}
+  ],
+  "JavaScript": [
+    {"platform": "Udemy", "title": "The Complete JavaScript Course", "url": "https://www.udemy.com/course/the-complete-javascript-course/"},
+    {"platform": "Coursera", "title": "HTML, CSS, and Javascript for Web Developers", "url": "https://www.coursera.org/learn/html-css-javascript-for-web-developers"}
+  ],
+  "Cloud AWS": [
+    {"platform": "Coursera", "title": "AWS Cloud Practitioner Essentials", "url": "https://www.coursera.org/learn/aws-cloud-practitioner-essentials"},
+    {"platform": "Udemy", "title": "AWS Certified Solutions Architect", "url": "https://www.udemy.com/course/aws-certified-solutions-architect-associate-saa-c03/"}
+  ],
+  "DevOps": [
+    {"platform": "Coursera", "title": "DevOps on AWS Specialization", "url": "https://www.coursera.org/specializations/aws-devops"},
+    {"platform": "Udemy", "title": "DevOps Beginners to Advanced", "url": "https://www.udemy.com/course/decodingdevops/"}
+  ],
+  "Git": [
+    {"platform": "Udemy", "title": "Git & GitHub Complete Guide", "url": "https://www.udemy.com/course/git-and-github-bootcamp/"},
+    {"platform": "Coursera", "title": "Introduction to Git and GitHub", "url": "https://www.coursera.org/learn/introduction-git-github"}
+  ],
+  "REST API": [
+    {"platform": "Udemy", "title": "REST APIs with Flask and Python", "url": "https://www.udemy.com/course/rest-api-flask-and-python/"},
+    {"platform": "Coursera", "title": "APIs in Python", "url": "https://www.coursera.org/learn/apis-in-python"}
+  ],
+  "AutoCAD": [
+    {"platform": "Udemy", "title": "AutoCAD 2024 Complete Course", "url": "https://www.udemy.com/course/autocad-2020/"},
+    {"platform": "Coursera", "title": "CAD and Digital Manufacturing Specialization", "url": "https://www.coursera.org/specializations/autodesk-cad-cam-cae-manufacturing"}
+  ],
+  "MATLAB": [
+    {"platform": "Coursera", "title": "Introduction to Programming with MATLAB", "url": "https://www.coursera.org/learn/matlab"},
+    {"platform": "Udemy", "title": "MATLAB for Engineers and Scientists", "url": "https://www.udemy.com/course/matlab-programming-for-engineers-and-scientists/"}
+  ],
+  "Figma": [
+    {"platform": "Udemy", "title": "Figma UI UX Design Essentials", "url": "https://www.udemy.com/course/figma-ux-ui-design-user-experience-tutorial-course/"},
+    {"platform": "Coursera", "title": "UI/UX Design Specialization", "url": "https://www.coursera.org/specializations/ui-ux-design"}
+  ],
+  "Adobe XD": [
+    {"platform": "Udemy", "title": "Adobe XD CC UX Design", "url": "https://www.udemy.com/course/ui-ux-web-design-using-adobe-xd/"}
+  ],
+  "Financial Modeling": [
+    {"platform": "Coursera", "title": "Financial Modeling for Startups & Small Businesses", "url": "https://www.coursera.org/learn/financial-modeling"},
+    {"platform": "Udemy", "title": "Financial Modeling in Excel", "url": "https://www.udemy.com/course/financial-analysis/"}
+  ],
+  "Salesforce": [
+    {"platform": "Coursera", "title": "Salesforce Sales Development Representative", "url": "https://www.coursera.org/professional-certificates/salesforce-sales-development-representative"},
+    {"platform": "Udemy", "title": "Salesforce Admin & Developer", "url": "https://www.udemy.com/course/salesforce-administration-and-development/"}
+  ],
+  "SEO": [
+    {"platform": "Coursera", "title": "Search Engine Optimization Specialization", "url": "https://www.coursera.org/specializations/seo"},
+    {"platform": "Udemy", "title": "The Complete SEO Course", "url": "https://www.udemy.com/course/seo-2020/"}
+  ],
+  "Tableau": [
+    {"platform": "Coursera", "title": "Data Visualization with Tableau", "url": "https://www.coursera.org/specializations/data-visualization"},
+    {"platform": "Udemy", "title": "Tableau 2024 A-Z", "url": "https://www.udemy.com/course/tableau10/"}
+  ],
+  "Power BI": [
+    {"platform": "Udemy", "title": "Microsoft Power BI Desktop for Business Intelligence", "url": "https://www.udemy.com/course/microsoft-power-bi-up-running-with-power-bi-desktop/"},
+    {"platform": "Coursera", "title": "Data Analysis and Visualization with Power BI", "url": "https://www.coursera.org/learn/data-analysis-power-bi-microsoft"}
+  ],
+  "Kubernetes": [
+    {"platform": "Udemy", "title": "Kubernetes for the Absolute Beginners", "url": "https://www.udemy.com/course/learn-kubernetes/"},
+    {"platform": "Coursera", "title": "Getting Started with Google Kubernetes Engine", "url": "https://www.coursera.org/learn/google-kubernetes-engine"}
+  ],
+  "MongoDB": [
+    {"platform": "Udemy", "title": "The Complete Developers Guide to MongoDB", "url": "https://www.udemy.com/course/the-complete-developers-guide-to-mongodb/"}
+  ],
+  "React": [
+    {"platform": "Udemy", "title": "React - The Complete Guide", "url": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/"},
+    {"platform": "Coursera", "title": "Meta Front-End Developer Certificate", "url": "https://www.coursera.org/professional-certificates/meta-front-end-developer"}
+  ]
+}

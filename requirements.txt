@@ -1,0 +1,34 @@
+# Core NLP
+nltk==3.8.1
+spacy==3.7.4
+sentence-transformers==2.7.0
+
+# PDF/DOCX Parsing
+pdfplumber==0.11.4
+python-docx==1.1.2
+PyMuPDF==1.24.5
+
+# ML / Vectorization
+scikit-learn==1.5.1
+numpy==1.26.4
+torch==2.3.1
+
+# Web Framework / UI
+streamlit==1.36.0
+plotly==5.22.0
+
+# LLM Integration
+google-generativeai==0.7.2
+
+# Database
+# sqlite3 is built-in — no install needed
+
+# API / HTTP
+requests==2.32.3
+python-dotenv==1.0.1
+
+# Visualization extras
+pandas==2.2.2
+
+# Utilities
+Pillow==10.4.0
