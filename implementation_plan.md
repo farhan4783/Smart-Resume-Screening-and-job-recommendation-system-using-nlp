@@ -169,7 +169,7 @@ Two primary modes selectable via sidebar:
 
 1. **Parser Test**
    ```bash
-   cd c:  Desktop\DEKSTOP\others\Major_Project
+   cd c:  \Major_Project
    python -c "from backend.parser import extract_text; print(extract_text('DataSet/data/Resumes/AjayKumar.docx')[:500])"
    ```
 
@@ -205,7 +205,7 @@ Two primary modes selectable via sidebar:
 
 1. Run the app:
    ```bash
-   cd c:\Users\FARAZ KHAN\Desktop\DEKSTOP\others\Major_Project
+   cd c:\Major_Project
    streamlit run app.py
    ```
 2. Open browser at `http://localhost:8501`
