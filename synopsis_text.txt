@@ -1,0 +1,74 @@
+On
+DEGREE
+Session 2025-26 in
+Computer Science and Engineering
+By-
+Mohd Farhan (CS-2341429), Navaneet (CS-23411348), Navya Vashistha (CS-23411266), Mohammad Umar (CS-2341437), Nida Fatima (CS-2341757).
+Under the guidance of – Ms. Aanchal Vij
+SCHOOL OF COMPUTER SCIENCE AND ENGINEERING
+IILM UNIVERSITY, GREATER NOIDA, INDIA
+March, 2026
+SCHOOL OF COMPUTER SCIENCE AND ENGINEERING
+IILM UNIVERSITY, GREATER NOIDA
+1. Introduction
+The digital recruitment era has introduced a "Great Talent Paradox", while job opportunities are more accessible, the sheer volume of applications has overwhelmed traditional human resource departments. In markets like India, where approximately one million individuals enter the workforce monthly, the resulting "inbound overload" makes manual screening physically impossible and prone to significant human error.
+This project aims to revolutionize talent acquisition by developing a system that transitions from legacy keyword-matching to deep semantic understanding. The system treats resume as dynamic semantic.
+Traditional screening methods have failed to keep pace with this growth. Manual review is time-consuming and prone to human error, making it difficult to identify the most suitable candidates within short hiring windows. This project introduces an AI-powered ecosystem that moves beyond "keyword hunting" to "semantic understanding". By leveraging transformer-based models like BERT (Bidirectional Encoder Representations from Transformers) and Large Language Models (LLMs), the system treats resume as dynamic semantic profiles rather than static documents. This allows for context-aware matching that can recognize that a candidate with "project leadership" experience is conceptually a match for "team management," even if the specific keyword is absent.
+The primary purpose of the Intelligent Resume Screening and Job Recommendation System is to modernize the talent acquisition funnel by replacing traditional, rigid keyword-based filtering with Deep Semantic Understanding. Recruiters currently spend an average of less than two minutes—and sometimes as little as seven seconds—reviewing a single curriculum vitae (CV). This time constraint results in a "leaky bucket" at the top of the recruitment funnel, where highly qualified individuals are frequently rejected simply because their resumes lack specific phrasing or utilize synonyms not included in a standard Boolean query. This system serves as a sophisticated decision-support engine capable of interpreting professional intent and predicting candidate-job alignment in real-time.
+2. Problem Statement
+The current resume screening and job matching process is fundamentally inefficient, creating a bottleneck that affects both organizational productivity and individual career growth. The core problem can be decomposed into the following five critical dimensions:
+Inbound Overload and Time Constraints: Recruiters today spend an average of less than two minutes reviewing a single CV, with some studies indicating as little as 7 seconds of attention per document. This leads to "leaky bucket" scenarios where nearly 95% of applicants are filtered out, often resulting in high-potential talent being overlooked due to human fatigue or formatting oversight.
+Keyword Rigidity and Boolean Failure: Legacy Applicant Tracking Systems (ATS) rely on exact-match syntax. If a resume lacks the specific phrasing used in a recruiter’s query, the candidate is disqualified regardless of their true proficiency. These systems cannot capture natural language semantics, synonyms, or the contextual meaning of a candidate’s accomplishments.
+Unstructured Data Complexity: Resumes are unstructured documents submitted in a myriad of formats (PDF, DOCX, TXT, JPG) with no standardized template. Converting this diverse data into a structured format for comparison is a significant computational challenge.
+The Skill Gap Disconnect: Candidates are often unaware of how their current skill sets align with evolving market demands. Most existing systems act as "gatekeepers" for the company rather than "guides" for the applicant, offering no actionable path for a rejected candidate to improve their employability.
+3. Objectives
+The primary goal of this project is to develop an end-to-end, AI-driven recruitment ecosystem that transitions from legacy keyword-filtering to deep semantic understanding.
+To Develop an Automated NLP Parser, implementing a robust information extraction pipeline using Named Entity Recognition (NER) (via spaCy) to accurately extract structured data—including name, contact details, technical skills, educational background, and professional experience—from unstructured PDF and DOCX formats. Implementing Semantic Similarity Matching, utilize transformer-based architectures, specifically Bidirectional Encoder Representations from Transformers (BERT), to generate high-dimensional contextual embeddings. This objective focuses on moving beyond rigid keyword matching to calculate a precise "Match Score" using Cosine Similarity between candidate profiles and job descriptions. To Perform Skill Gap Analysis: Design a logic engine that compares extracted candidate competencies against a predefined CSV-based knowledge base of industry requirements to identify specific professional deficiencies. To Integrate Real-Time Career Recommendations: Connect the system to the J Search API (via Rapid API) to fetch live job listings from platforms like LinkedIn and Indeed, providing candidates with immediate, relevant employment opportunities.
+To Provide Actionable Upskilling Roadmaps, develop a recommendation module that maps identified skill gaps to specific online learning paths (e.g., Coursera or Udemy) to assist candidates in enhancing their employability.
+Mitigate Algorithmic and Human Bias, Incorporate a "Blind Screening" mode that masks Personally Identifiable Information (PII)—such as gender, name, and location—during the initial ranking phase to ensure candidate evaluation is based strictly on demonstrable capabilities.
+4. Methodology
+To achieve these objectives, the project will be engineered using a cloud-native microservices approach. This allows the heavy machine learning computations to run independently from the user-facing web applications. The overarching structure of these interacting services is mapped out in the architectural design below.
+The core logic of this architecture will be executed through a modular, five-phase engineering pipeline:
+Phase 1: Data Acquisition and Pre-processing
+Utilizing document processing libraries to parse complex PDF/DOCX layers. The raw text will undergo noise reduction: lowercasing, tokenization, and stop-word removal.
+Phase 2: Information Extraction (NER)
+A custom NLP pipeline will be trained to recognize non-standard technical entities. The system will extract structured profiles (JSON format) from the unstructured text.
+Phase 3: Semantic Representation (Embedding)
+Instead of TF-IDF, the system will utilize a pre-trained Transformer model (i.e., BERT) to map extracted skills into a continuous vector space. The step-by-step transformation from raw document to searchable vector is detailed in the NLP pipeline diagram below.
+Phase 4: Algorithmic Matchmaking
+The system will calculate the Cosine Similarity between the candidate's embedding vector and the Job Description's vector, outputting a final normalization score (0 to 100%).
+Phase 5: System Integration and UI/UX Development
+Developing a RESTful API to serve the ML models and building a responsive frontend application. The complete logical flow of data between these phases, from ingestion to final recommendation, is summarized in the Level 1 Data Flow Diagram.
+`
+5. Tools & Technologies
+Programming Language: Python 3
+NLP Frameworks: spaCy, NLTK, Pyresparser, LangChain
+Machine Learning Models: Sentence Transformers (all-MiniLM-L6-v2), Random Forest Classifier (for category prediction)
+LLM Integration: Gemini-2.0-flash (via Google Generative AI)
+Database Management: MySQL (for structured user data), ChromaDB (for vector embeddings)
+Frontend/UI: React
+6. Expected Outcomes
+The implementation of this AI-driven framework is expected to yield significant quantitative and qualitative improvements over traditional manual and keyword-based recruitment processes:
+A. Technical Performance & Accuracy
+High Categorization Accuracy, the system is expected to achieve a classification accuracy for job-role categorization using the Random Forest model, significantly outperforming baseline Applicant Tracking Systems (ATS) which typically score between. Precision in Information Extraction, Leveraging Named Entity Recognition (NER) and transformer-based parsers, the system aims for higher precision in extracting structured data (skills, education, experience) from unstructured PDF and DOCX formats. Reduced Latency, the automated pipeline is designed to process and analyse a single resume in an average of couple of seconds, compared to some seconds required by existing digital tools and the minutes required for manual human review.
+B. Recruiter-Centric Outcomes
+Smarter Shortlisting, by utilizing BERT-based semantic embeddings, the system will identify "contextual fits" (e.g., matching a "Java Developer" with a "Backend Engineer" role) even when exact keywords do not overlap. Efficiency Gains, Organizations are expected to see a faster time-to-hire and a reduction in manual screening time, allowing HR teams to focus on candidate engagement rather than data entry.
+C. Candidate-Centric Outcomes
+Personalized Career Roadmaps Candidates will receive a "Fit Score" and a detailed Skill-Gap Analysis that identifies missing competencies for their target roles. Actionable Upskilling The system will output direct links to relevant online courses (Coursera/Udemy) to help candidates bridge identified gaps, fostering long-term employability. Bias Mitigation, through "Blind Screening" modes, the system ensures a fairer evaluation by masking Personally Identifiable Information (PII) like gender and name during the initial ranking phase, potentially reducing hiring bias up.
+7. Applications
+This project has broad applicability across several sectors involved in human capital management and career development:
+1. Corporate HR Departments (Enterprise Recruitment)
+High-Volume Hiring Automating the top of the recruitment funnel for large enterprises that receive thousands of applications daily for technical and frontline roles. Internal Talent Mobility, helping large organizations identify existing employees who possess the skills for internal job openings, thereby reducing external hiring costs.
+2. Recruitment Agencies & Consultancies
+Rapid Candidate Sourcing Enabling third-party recruiters to quickly screen massive databases and provide clients with highly relevant, pre-vetted shortlists. Market Trend Analytics, providing agencies with data-driven insights into "in-demand" skills and popular job roles within specific industries to better advise their clients.
+3. Educational Institutions & Placement Cells
+Student Profile Auditing Assisting universities in analysing student resumes before the placement season begins. This allows placement cells to provide students with targeted feedback to improve their resumes. Career Counselling, directing students toward specific certifications and skill sets that are currently trending in the job market, ensuring they remain competitive upon graduation.
+4. Digital Job Portals & Career Platforms
+Enhanced Recommendation Engines Integrating the semantic matching engine into existing job boards (like LinkedIn or Indeed) to provide job seekers with more relevant alerts and higher-quality matches. Resume Optimization Tools, offering a "Resume Score" service to users, where they can upload their CV to see how well it aligns with market demands and receive automated suggestions for improvement.
+5. Government and Public Employment Services
+Workforce Development Utilizing the skill-gap analysis to identify broader trends in the labour market and directing public funding toward vocational training programs that address real-world industry shortages.
+8. Conclusion
+The Intelligent Resume Screening and Job Recommendation system represents a paradigm shift from a "reactive digital filing cabinet" to a "proactive talent discovery engine." By integrating transformer-based semantic insights with Large Language Models, this project successfully bridges the massive disconnect between unstructured human history (the resume) and structured organizational need (the job description). Unlike traditional systems that serve solely as a barrier for entry, our framework provides a dual-benefit model: recruiters achieve unprecedented operational speed and accuracy through automated rankings, while applicants receive a guided roadmap for professional growth through skill-gap analysis and course recommendations.
+The integration of Retrieval-Augmented Generation (RAG) ensures that the matching process is no longer a "black box," providing explainable rationales that build trust between the AI and the hiring manager. As we move toward a future of "Agentic Recruitment," this system serves as a foundational platform for fairer, faster, and more transparent talent acquisition. Ultimately, by optimizing the alignment between individual potential and corporate demand, this project contributes to a more productive workforce and a more inclusive global labour market
+Guide Signature: _____________________
+Date: ________________________________
