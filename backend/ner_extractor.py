@@ -16,112 +16,124 @@ try:
 except Exception:
     pass
 
-# ─── EXPANDED SKILLS VOCABULARY (200+ entries) ────────────────────────────────
+# ─── MASSIVELY EXPANDED TECHNICAL SKILLS VOCABULARY (500+ entries) ──────────────
 SKILLS_VOCAB = [
-    # Programming Languages
-    "python", "java", "javascript", "typescript", "c++", "c#", "c", "ruby", "go", "rust",
+    # Core Languages
+    "python", "java", "javascript", "typescript", "c++", "c#", "c", "ruby", "go", "golang", "rust",
     "scala", "kotlin", "swift", "php", "r", "matlab", "perl", "shell", "bash", "powershell",
     "objective-c", "dart", "lua", "groovy", "haskell", "elixir", "clojure", "fortran",
-    "assembly", "cobol", "vba", "visual basic",
-    # Web Frontend
-    "react", "angular", "vue", "svelte", "next.js", "nuxt.js", "gatsby", "ember",
-    "html", "css", "sass", "less", "bootstrap", "tailwind", "material ui", "chakra ui",
-    "jquery", "webpack", "vite", "babel", "redux", "mobx", "zustand",
-    "responsive design", "progressive web app", "single page application",
-    # Web Backend / Frameworks
-    "node.js", "django", "flask", "fastapi", "spring", "spring boot", "express",
-    ".net", "asp.net", "ruby on rails", "laravel", "symfony", "codeigniter",
-    "graphql", "rest api", "soap", "grpc", "websocket", "microservices",
+    "assembly", "cobol", "vba", "visual basic", "erlang", "f#", "julia", "ocaml", "nim",
+    
+    # Web Frontend & UI Libraries
+    "react", "angular", "vue", "vue.js", "svelte", "next.js", "nuxt.js", "gatsby", "ember",
+    "html", "html5", "css", "css3", "sass", "less", "bootstrap", "tailwind", "tailwind css",
+    "material ui", "mui", "chakra ui", "ant design", "styled components", "framer motion",
+    "jquery", "webpack", "vite", "babel", "rollup", "parcel", "esbuild",
+    "redux", "mobx", "zustand", "recoil", "pinia", "rxjs", "graphql", "apollo",
+    "responsive design", "progressive web app", "pwa", "single page application", "spa", "webassembly", "wasm",
+    
+    # Web Backend & API Frameworks
+    "node.js", "nodejs", "deno", "bun", "django", "flask", "fastapi", "spring", "spring boot", "express", "express.js",
+    ".net", "asp.net", "asp.net core", "ruby on rails", "rails", "laravel", "symfony", "codeigniter",
+    "rest api", "soap", "grpc", "websocket", "microservices", "serverless", "soa", "nestjs",
+    "tornado", "koa", "hapi", "phoenix", "fiber", "gin", "echo",
+    
     # Mobile Development
     "android", "ios", "react native", "flutter", "xamarin", "ionic", "swiftui",
-    "kotlin multiplatform",
-    # Data Science / ML / AI
-    "machine learning", "deep learning", "artificial intelligence",
+    "kotlin multiplatform", "cordova", "capacitor",
+    
+    # Data Science, ML & AI
+    "machine learning", "deep learning", "artificial intelligence", "ai", "ml", "dl",
     "nlp", "natural language processing", "computer vision", "reinforcement learning",
-    "tensorflow", "pytorch", "keras", "scikit-learn", "xgboost", "lightgbm",
-    "pandas", "numpy", "scipy", "matplotlib", "seaborn", "plotly",
-    "opencv", "hugging face", "transformers", "bert", "gpt",
+    "llm", "large language models", "generative ai", "prompt engineering",
+    "tensorflow", "pytorch", "keras", "scikit-learn", "xgboost", "lightgbm", "catboost",
+    "pandas", "numpy", "scipy", "matplotlib", "seaborn", "plotly", "bokeh", "d3.js",
+    "opencv", "hugging face", "transformers", "bert", "gpt", "llama", "stable diffusion",
     "data science", "data analysis", "data visualization", "statistical analysis",
-    "data mining", "feature engineering", "model deployment", "mlops",
-    "big data", "spark", "hadoop", "hive", "pig", "airflow",
-    "tableau", "power bi", "looker", "qlik", "metabase",
-    "jupyter", "colab", "rstudio",
-    # Cloud / DevOps / Infrastructure
-    "aws", "azure", "google cloud", "gcp", "heroku", "digitalocean", "vercel", "netlify",
-    "docker", "kubernetes", "jenkins", "gitlab ci", "github actions", "circleci",
-    "terraform", "ansible", "puppet", "chef", "vagrant",
-    "linux", "unix", "ubuntu", "centos", "redhat",
-    "nginx", "apache", "load balancing", "cdn",
-    "ci/cd", "devops", "sre", "infrastructure as code",
-    # Databases
-    "sql", "mysql", "postgresql", "mongodb", "redis", "oracle", "sqlite", "nosql",
-    "elasticsearch", "cassandra", "dynamodb", "firebase", "supabase",
-    "neo4j", "couchdb", "mariadb", "mssql", "snowflake", "redshift",
-    "data warehousing", "etl", "data pipeline",
-    # Tools / Version Control / PM
-    "git", "github", "gitlab", "bitbucket", "svn",
-    "jira", "confluence", "trello", "asana", "notion", "monday.com",
-    "slack", "teams", "zoom",
+    "data mining", "feature engineering", "model deployment", "mlops", "langchain",
+    
+    # Big Data & Data Engineering
+    "big data", "spark", "apache spark", "hadoop", "hive", "pig", "airflow", "luigi", "presto", "trino",
+    "kafka", "rabbitmq", "activemq", "zeromq", "kinesis", "flink", "storm",
+    "tableau", "power bi", "looker", "qlik", "metabase", "dbt",
+    "jupyter", "colab", "rstudio", "databricks", "snowflake", "redshift", "bigquery",
+    "data warehousing", "etl", "elt", "data pipeline", "data modeling",
+    
+    # Cloud, DevOps & Infrastructure
+    "aws", "amazon web services", "azure", "microsoft azure", "google cloud", "gcp",
+    "heroku", "digitalocean", "vercel", "netlify", "cloudflare", "linode",
+    "docker", "kubernetes", "k8s", "docker swarm", "openshift",
+    "jenkins", "gitlab ci", "github actions", "circleci", "travis ci", "bitbucket pipelines",
+    "terraform", "ansible", "puppet", "chef", "vagrant", "pulumi", "cloudformation",
+    "linux", "unix", "ubuntu", "centos", "redhat", "debian", "alpine", "posix",
+    "nginx", "apache", "haproxy", "traefik", "load balancing", "cdn",
+    "ci/cd", "devops", "devsecops", "sre", "site reliability engineering", "infrastructure as code", "iac",
+    "prometheus", "grafana", "datadog", "new relic", "splunk", "elk stack", "logstash", "kibana",
+    
+    # Databases & Storage
+    "sql", "mysql", "postgresql", "postgres", "mongodb", "redis", "oracle", "sqlite", "nosql",
+    "elasticsearch", "cassandra", "dynamodb", "firebase", "supabase", "cosmos db",
+    "neo4j", "couchdb", "mariadb", "mssql", "sql server",
+    "memcached", "rocksdb", "cockroachdb", "clickhouse", "timescaledb",
+    "orm", "sqlalchemy", "prisma", "hibernate", "mongoose", "typeorm",
+    
+    # Architecture, Patterns & Concepts
+    "object-oriented programming", "oop", "functional programming", "fp",
+    "mvc", "mvvm", "solid principles", "design patterns", "test-driven development", "tdd",
+    "behavior-driven development", "bdd", "domain-driven design", "ddd",
+    "event-driven architecture", "clean architecture", "hexagonal architecture",
+    "restful architecture", "distributed systems", "concurrency", "multithreading", "asyncio",
+    
+    # Version Control, PM & Collaboration
+    "git", "github", "gitlab", "bitbucket", "svn", "mercurial",
+    "jira", "confluence", "trello", "asana", "notion", "monday.com", "linear",
     "agile", "scrum", "kanban", "waterfall", "lean", "six sigma",
-    "pmp", "prince2", "safe",
-    # Design / UX
+    
+    # Design & UX
     "figma", "adobe xd", "sketch", "invision", "zeplin",
-    "photoshop", "illustrator", "indesign", "after effects", "premiere pro",
     "ui design", "ux design", "user research", "wireframing", "prototyping",
-    "accessibility", "design thinking",
-    # Testing / QA
-    "selenium", "cypress", "jest", "mocha", "pytest", "junit", "testng",
+    
+    # Testing & QA
+    "selenium", "cypress", "playwright", "puppeteer", "jest", "mocha", "chai", "jasmine", "vitest",
+    "pytest", "unittest", "junit", "testng", "nunit", "xunit",
     "manual testing", "automation testing", "performance testing", "load testing",
-    "api testing", "regression testing", "unit testing", "integration testing",
-    "postman", "soapui", "jmeter",
-    # Security
-    "cybersecurity", "penetration testing", "ethical hacking", "owasp",
-    "encryption", "ssl", "firewall", "siem", "soc",
-    "information security", "network security", "vulnerability assessment",
-    # Business / Finance / Management
-    "project management", "business analysis", "stakeholder management", "risk management",
-    "financial modeling", "forecasting", "budgeting", "accounting",
-    "crm", "salesforce", "erp", "sap", "oracle erp",
-    "ms office", "excel", "powerpoint", "word", "outlook",
-    "quickbooks", "tally", "bloomberg",
-    "supply chain", "operations management", "strategic planning",
-    "digital marketing", "seo", "sem", "google analytics", "content marketing",
-    "social media marketing", "email marketing", "copywriting",
-    # Healthcare
-    "hipaa", "emr", "ehr", "icd-10", "medical coding", "patient care", "clinical",
-    "fda", "gmp", "pharmacology", "nursing", "phlebotomy",
-    # Engineering / Manufacturing
-    "autocad", "solidworks", "catia", "plc", "scada", "matlab", "simulink",
-    "mechanical design", "electrical engineering", "civil engineering",
-    "finite element analysis", "cfd", "3d printing", "cnc",
+    "api testing", "regression testing", "unit testing", "integration testing", "e2e testing",
+    "postman", "soapui", "jmeter", "k6", "locust",
+    
+    # Cybersecurity & Blockchain
+    "cybersecurity", "penetration testing", "ethical hacking", "owasp", "cryptography",
+    "encryption", "ssl", "tls", "firewall", "siem", "soc", "iam", "oauth", "jwt",
+    "blockchain", "smart contracts", "solidity", "web3", "ethereum", "bitcoin", "ipfs",
+    
+    # Core Engineering & Hardware
+    "autocad", "solidworks", "matlab", "simulink", "ros", "robotics",
+    "embedded systems", "iot", "internet of things", "arduino", "raspberry pi",
+    "fpga", "verilog", "vhdl", "rtos",
+    
     # Soft Skills
     "communication", "leadership", "teamwork", "problem solving", "critical thinking",
-    "time management", "negotiation", "presentation", "public speaking",
-    "conflict resolution", "adaptability", "mentoring",
+    "time management", "mentoring"
 ]
 
-# Common job titles for extraction
+# Common tech-heavy job titles for extraction
 JOB_TITLES = [
-    "software engineer", "software developer", "web developer", "full stack developer",
-    "frontend developer", "backend developer", "devops engineer", "data scientist",
-    "data analyst", "data engineer", "machine learning engineer", "ai engineer",
-    "product manager", "project manager", "program manager", "scrum master",
-    "business analyst", "systems analyst", "database administrator", "network engineer",
-    "cloud architect", "solutions architect", "technical lead", "team lead",
-    "cto", "ceo", "cfo", "coo", "vp engineering", "director",
-    "qa engineer", "test engineer", "sdet", "automation engineer",
-    "security analyst", "security engineer", "consultant", "advisor",
-    "ui designer", "ux designer", "graphic designer", "art director",
-    "content writer", "technical writer", "copywriter",
-    "sales manager", "account manager", "marketing manager", "hr manager",
-    "recruiter", "talent acquisition", "operations manager",
-    "accountant", "financial analyst", "investment banker", "auditor",
-    "teacher", "professor", "instructor", "trainer",
-    "nurse", "doctor", "pharmacist", "medical officer",
-    "chef", "sous chef", "executive chef",
-    "lawyer", "advocate", "legal counsel", "paralegal",
-    "civil engineer", "mechanical engineer", "electrical engineer", "chemical engineer",
-    "intern", "trainee", "associate", "senior", "principal", "staff",
+    "software engineer", "senior software engineer", "principal software engineer", "staff software engineer",
+    "software developer", "web developer", "full stack developer", "full-stack developer", "fullstack developer",
+    "frontend developer", "front-end developer", "backend developer", "back-end developer",
+    "devops engineer", "site reliability engineer", "sre", "cloud engineer", "cloud architect",
+    "data scientist", "senior data scientist", "data analyst", "data engineer", "big data engineer",
+    "machine learning engineer", "ml engineer", "ai engineer", "artificial intelligence engineer",
+    "nlp engineer", "computer vision engineer", "research scientist", "applied scientist",
+    "product manager", "technical product manager", "project manager", "scrum master",
+    "business analyst", "systems analyst", "database administrator", "dba", "network engineer",
+    "solutions architect", "enterprise architect", "technical lead", "tech lead", "team lead",
+    "cto", "chief technology officer", "vp of engineering", "director of engineering",
+    "qa engineer", "quality assurance engineer", "test engineer", "sdet", "software development engineer in test",
+    "security analyst", "security engineer", "cybersecurity engineer", "penetration tester",
+    "ui designer", "ux designer", "ui/ux designer", "product designer",
+    "system administrator", "sysadmin", "infrastructure engineer", "release engineer",
+    "blockchain developer", "smart contract developer", "web3 developer",
+    "embedded software engineer", "hardware engineer", "robotics engineer"
 ]
 
 # Degree keywords

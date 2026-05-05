@@ -88,24 +88,27 @@ def compute_ats_score(
     exp_score = 0
     exp_details = []
 
-    # Action verbs
+    # Technical action verbs
     action_verbs = [
         "developed", "implemented", "managed", "designed", "led", "created",
         "built", "optimized", "analyzed", "delivered", "achieved", "improved",
         "reduced", "increased", "launched", "deployed", "automated", "collaborated",
         "mentored", "presented", "negotiated", "resolved", "streamlined",
+        "architected", "engineered", "refactored", "migrated", "scaled",
+        "orchestrated", "provisioned", "debugged", "troubleshot", "configured",
+        "integrated", "benchmarked", "profiled", "secured", "modernized"
     ]
     verb_count = sum(1 for v in action_verbs if re.search(r"\b" + v + r"\b", text_lower))
 
-    if verb_count >= 8:
+    if verb_count >= 12:
         exp_score += 8
-    elif verb_count >= 4:
+    elif verb_count >= 6:
         exp_score += 5
-    elif verb_count >= 1:
+    elif verb_count >= 2:
         exp_score += 2
     else:
-        suggestions.append("Use strong action verbs like 'Developed', 'Implemented', 'Led', 'Optimized'")
-    exp_details.append(f"{verb_count} action verbs found")
+        suggestions.append("Use strong technical action verbs like 'Architected', 'Engineered', 'Scaled', 'Optimized'")
+    exp_details.append(f"{verb_count} technical action verbs found")
 
     # Quantified achievements
     quant_pattern = r"\d+\s*(%|percent|million|billion|thousand|users|clients|projects|team|years|months)"
@@ -232,11 +235,23 @@ def compute_ats_score(
             elif "github" in link_lower:
                 link_score += 4
                 link_details.append("✅ GitHub profile")
+            elif "leetcode" in link_lower:
+                link_score += 3
+                link_details.append("✅ LeetCode profile")
+            elif "kaggle" in link_lower:
+                link_score += 3
+                link_details.append("✅ Kaggle profile")
+            elif "stackoverflow" in link_lower:
+                link_score += 3
+                link_details.append("✅ StackOverflow profile")
+            elif "dev.to" in link_lower or "medium.com" in link_lower:
+                link_score += 2
+                link_details.append("✅ Tech Blog link")
             else:
                 link_score += 2
                 link_details.append(f"✅ Portfolio/website link")
     if link_score == 0:
-        suggestions.append("Add LinkedIn and GitHub profile links to strengthen your online presence")
+        suggestions.append("Add LinkedIn, GitHub, or LeetCode profile links to strengthen your technical presence")
         link_details.append("❌ No professional links found")
     link_score = min(10, link_score)
     breakdown["Online Presence"] = {"score": link_score, "max": 10, "details": link_details}

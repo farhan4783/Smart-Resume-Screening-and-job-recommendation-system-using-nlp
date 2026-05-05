@@ -6,35 +6,41 @@
 }
 
 :root {
-  --bg-primary: #0a0a1a;
-  --bg-secondary: #1a1035;
-  --bg-tertiary: #0d1b2a;
-  --bg-card: rgba(255, 255, 255, 0.03);
-  --bg-card-hover: rgba(255, 255, 255, 0.06);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-medium: rgba(255, 255, 255, 0.1);
-  --border-accent: rgba(99, 102, 241, 0.2);
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-dim: #475569;
+  --bg-primary: #05050f;
+  --bg-secondary: #0f0a20;
+  --bg-tertiary: #08101a;
+  --bg-card: rgba(18, 18, 38, 0.4);
+  --bg-card-hover: rgba(25, 25, 50, 0.6);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-accent: rgba(99, 102, 241, 0.3);
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-dim: #52525b;
   --accent: #6366f1;
   --accent-light: #818cf8;
-  --accent-purple: #8b5cf6;
-  --accent-pink: #c084fc;
-  --green: #22c55e;
+  --accent-purple: #a855f7;
+  --accent-pink: #ec4899;
+  --accent-cyan: #06b6d4;
+  --green: #10b981;
   --amber: #f59e0b;
   --red: #ef4444;
   --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --radius: 16px;
-  --radius-sm: 10px;
-  --radius-full: 50px;
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-full: 9999px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 body {
   font-family: var(--font);
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 40%, var(--bg-tertiary) 100%);
+  background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.12), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.12), transparent 25%),
+    radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.08), transparent 30%);
+  background-attachment: fixed;
   color: var(--text-primary);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -43,6 +49,16 @@ body {
 #root {
   display: flex;
   min-height: 100vh;
+  position: relative;
+}
+#root::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
 }
 
 /* ─── Layout ─────────────────────────────────────────────── */
@@ -225,46 +241,68 @@ body {
 /* ─── Glass Card ─────────────────────────────────────────── */
 .glass-card {
   background: var(--bg-card);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
   padding: 1.5rem;
   margin: 0.6rem 0;
+  box-shadow: 0 4px 24px -10px rgba(0, 0, 0, 0.5);
   transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  border-radius: var(--radius);
 }
 .glass-card:hover {
   border-color: var(--border-accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(99,102,241,0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15), 0 0 10px rgba(99, 102, 241, 0.05);
 }
 
 /* ─── Profile Card ───────────────────────────────────────── */
 .profile-card {
-  background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.06));
-  border: 1px solid rgba(99,102,241,0.12);
-  border-radius: 20px;
-  padding: 1.8rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.05));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 24px;
+  padding: 2rem;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 .profile-card::before {
   content: '';
   position: absolute;
   top: -60%;
   right: -40%;
-  width: 80%;
-  height: 80%;
-  background: radial-gradient(circle, rgba(99,102,241,0.04), transparent 70%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08), transparent 60%);
+  animation: pulse-glow 6s infinite alternate ease-in-out;
+}
+@keyframes pulse-glow {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+  100% { transform: scale(1.1) translate(-20px, 20px); opacity: 1; }
 }
 .profile-name {
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 .profile-role {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin: 4px 0 10px;
+  font-size: 0.9rem;
+  color: var(--accent-light);
+  font-weight: 500;
+  margin: 4px 0 12px;
 }
 
 /* ─── Badges ─────────────────────────────────────────────── */
