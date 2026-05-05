@@ -1,8 +1,14 @@
 """
 backend/embedder.py
 --------------------
-Singleton sentence-transformer embedder using 'all-MiniLM-L6-v2'.
-Generates 384-dimensional contextual embeddings for text.
+Singleton S-BERT embedder using 'all-mpnet-base-v2' (as specified in the
+research paper).  Generates 768-dimensional dense semantic vectors for
+resume-to-JD cosine comparison.
+
+Reference:
+    Paper Section V-D — "The text is pre-processed and then it is fed into
+    a pre-trained S-BERT model (particularly, all-mpnet-base-v2
+    architecture) … outputs a sparse human-vector of size 768."
 """
 
 # Force sentence-transformers to use PyTorch backend only
@@ -17,27 +23,31 @@ import numpy as np
 
 _model = None
 
+# Model specified in the research paper (Section V-D)
+_MODEL_NAME = "all-mpnet-base-v2"
+
 
 def _get_model():
     global _model
     if _model is None:
         from sentence_transformers import SentenceTransformer
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
+        print(f"[embedder] Loading S-BERT model: {_MODEL_NAME} (768-D) ...")
+        _model = SentenceTransformer(_MODEL_NAME)
     return _model
 
 
 def encode(text: str) -> np.ndarray:
     """
-    Encode text into a 384-dimensional embedding vector.
+    Encode text into a 768-dimensional S-BERT embedding vector.
 
     Args:
         text: Input string (resume text, job description, etc.)
 
     Returns:
-        np.ndarray of shape (384,)
+        np.ndarray of shape (768,)
     """
     model = _get_model()
-    # Truncate to 512-token-equivalent characters to stay within model limits
+    # Truncate to stay within model's 384-token context window
     truncated = text[:8000]
     embedding = model.encode(truncated, convert_to_numpy=True, normalize_embeddings=True)
     return embedding
@@ -51,7 +61,7 @@ def encode_batch(texts: list[str]) -> np.ndarray:
         texts: List of strings
 
     Returns:
-        np.ndarray of shape (N, 384)
+        np.ndarray of shape (N, 768)
     """
     model = _get_model()
     truncated = [t[:8000] for t in texts]

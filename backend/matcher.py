@@ -2,20 +2,47 @@
 backend/matcher.py
 -------------------
 Hybrid resume-to-job-description matching engine.
-Combines: semantic similarity (BERT) + skill overlap + category alignment.
+
+Implements Algorithm 1 from the research paper:
+    S-BERT cosine similarity (primary) + skill overlap + category alignment.
+
+Paper reference:
+    Section V-E — "The systematic screening mechanism works through a
+    comparative loop."  Algorithm 1 describes the S-BERT + NER entity
+    boosting pipeline.
 """
 
+import re
 import numpy as np
 from backend.embedder import encode, encode_batch
 
 
+# ── PII stripping (Paper Section VIII) ───────────────────────────────────────
+# "we automatically remove all possible forms of Identifiable Personal
+# Information from our data preprocessing workflow before even reaching
+# the vectorization step"
+_EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+_PHONE_RE = re.compile(r"(\+?\d[\d\s\-().]{7,}\d)")
+_URL_RE   = re.compile(r"https?://\S+|www\.\S+")
+
+def _strip_pii(text: str) -> str:
+    """Remove emails, phone numbers, and URLs before vectorization."""
+    text = _EMAIL_RE.sub(" ", text)
+    text = _PHONE_RE.sub(" ", text)
+    text = _URL_RE.sub(" ", text)
+    return text
+
+
 def compute_similarity(text1: str, text2: str) -> float:
     """
-    Compute cosine similarity between two text strings.
+    Compute cosine similarity between two text strings using S-BERT
+    (all-mpnet-base-v2, 768-D vectors).
+
+    PII is stripped before encoding as per paper Section VIII.
     Returns float between 0.0 and 1.0
     """
-    vec1 = encode(text1)
-    vec2 = encode(text2)
+    vec1 = encode(_strip_pii(text1))
+    vec2 = encode(_strip_pii(text2))
     similarity = float(np.dot(vec1, vec2))
     return max(0.0, min(1.0, similarity))
 
@@ -118,7 +145,13 @@ def compute_hybrid_score(
 
 def rank_candidates(candidates: list[dict], jd_text: str, required_skills: list = None) -> list[dict]:
     """
-    Rank multiple candidates against a single job description using hybrid scoring.
+    Rank multiple candidates against a single job description.
+
+    Implements Algorithm 1 from the research paper:
+        1. Preprocess + strip PII
+        2. S-BERT encode (768-D)
+        3. Cosine similarity
+        4. Hybrid scoring (semantic + skill overlap + category)
 
     Args:
         candidates: List of dicts with keys: name, text, skills, (optional) predicted_category
@@ -131,15 +164,16 @@ def rank_candidates(candidates: list[dict], jd_text: str, required_skills: list 
     if not candidates:
         return []
 
-    jd_vec = encode(jd_text)
-    resume_texts = [c["text"] for c in candidates]
+    # Strip PII before vectorization (Paper Section VIII)
+    jd_vec = encode(_strip_pii(jd_text))
+    resume_texts = [_strip_pii(c["text"]) for c in candidates]
     resume_vectors = encode_batch(resume_texts)
 
     results = []
     for i, candidate in enumerate(candidates):
-        # Semantic
-        semantic = float(np.dot(resume_vectors[i], jd_vec))
-        semantic = max(0.0, min(1.0, semantic))
+        # S-BERT cosine similarity (Algorithm 1, step 9)
+        cosine = float(np.dot(resume_vectors[i], jd_vec))
+        cosine = max(0.0, min(1.0, cosine))
 
         # Skill overlap
         cand_skills = candidate.get("skills", [])
@@ -156,13 +190,15 @@ def rank_candidates(candidates: list[dict], jd_text: str, required_skills: list 
 
         cat_score = 1.0 if cat_match else 0.3
 
-        total = 0.60 * semantic + 0.25 * skill_overlap + 0.15 * cat_score
+        # Hybrid total (paper enhancement over pure cosine)
+        total = 0.60 * cosine + 0.25 * skill_overlap + 0.15 * cat_score
         total = max(0.0, min(1.0, total))
 
         results.append({
             **candidate,
             "match_score": round(total, 4),
-            "semantic_score": round(semantic, 4),
+            "cosine_score": round(cosine, 4),       # Pure S-BERT cosine (Algorithm 1)
+            "semantic_score": round(cosine, 4),      # Alias for backward compat
             "skill_overlap": round(skill_overlap, 4),
             "category_bonus": cat_match,
             "match_pct": f"{total * 100:.1f}%",

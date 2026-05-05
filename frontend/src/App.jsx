@@ -309,7 +309,7 @@ function SeekerDashboard({ anonymize }) {
                   <div className="section-title">📊 Hybrid Score Breakdown (Top Match)</div>
                   <div className="metrics-row">
                     <div className="metric-card"><div className="metric-value" style={{ color: scoreColor(matchData.jobs[0].score) }}>{Math.round(matchData.jobs[0].score * 100)}%</div><div className="metric-label">Total Score</div></div>
-                    <div className="metric-card"><div className="metric-value text-accent">{Math.round((matchData.jobs[0].semantic_score || 0) * 100)}%</div><div className="metric-label">Semantic (60%)</div></div>
+                    <div className="metric-card"><div className="metric-value text-accent">{Math.round((matchData.jobs[0].semantic_score || 0) * 100)}%</div><div className="metric-label">S-BERT Cosine (60%)</div></div>
                     <div className="metric-card"><div className="metric-value" style={{ color: '#a78bfa' }}>{Math.round((matchData.jobs[0].skill_score || 0) * 100)}%</div><div className="metric-label">Skill Overlap (25%)</div></div>
                     <div className="metric-card"><div className="metric-value" style={{ color: '#c084fc' }}>{Math.round((matchData.jobs[0].category_score || 0) * 100)}%</div><div className="metric-label">Category (15%)</div></div>
                   </div>
@@ -604,13 +604,13 @@ export default function App() {
       {/* ── Main ── */}
       <main className="main-content">
         <div className="hero-header">Intelligent Resume Screening<br />& Job Recommendation</div>
-        <div className="hero-sub">Powered by BERT Semantic Embeddings · spaCy NER · Random Forest · Gemini AI · JSearch API</div>
+        <div className="hero-sub">Powered by S-BERT (all-mpnet-base-v2) · spaCy NER · TF-IDF + Random Forest · Gemini AI · Cosine Similarity</div>
         <hr className="divider" />
 
         {mode === 'seeker' ? <SeekerDashboard anonymize={anonymize} /> : <RecruiterDashboard anonymize={anonymize} />}
 
         <div className="footer">
-          🧠 <strong>ResumeIQ</strong> v2.0 · BERT + Random Forest + spaCy NER + Gemini AI + JSearch API · Hybrid Semantic Matching Engine
+          🧠 <strong>ResumeIQ</strong> v2.0 · S-BERT (all-mpnet-base-v2, 768-D) + TF-IDF + spaCy NER + Cosine Similarity · Research Paper Implementation
         </div>
       </main>
     </div>
