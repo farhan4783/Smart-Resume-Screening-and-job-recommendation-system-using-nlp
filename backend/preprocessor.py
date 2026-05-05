@@ -22,7 +22,7 @@ def _ensure_nltk():
     for path, name in resources:
         try:
             nltk.data.find(path)
-        except LookupError:
+        except (LookupError, OSError):
             nltk.download(name, quiet=True)
 
 _ensure_nltk()
