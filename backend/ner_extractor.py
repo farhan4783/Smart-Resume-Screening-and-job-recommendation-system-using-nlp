@@ -150,14 +150,47 @@ DEGREE_PATTERN = re.compile(
     re.IGNORECASE
 )
 
-EMAIL_PATTERN = re.compile(r"[\w\.\+\-]+@[\w\-]+\.[\w\.-]+")
+EMAIL_PATTERN = re.compile(r"[\w\.+\-]+@[\w\-]+\.[\w.\-]+")
 PHONE_PATTERN = re.compile(r"(\+?\d[\d\s\-\(\)\.]{7,}\d)")
 LINK_PATTERN = re.compile(r"(https?://[^\s,\)]+|www\.[^\s,\)]+)")
 LINKEDIN_PATTERN = re.compile(r"(https?://(?:www\.)?linkedin\.com/\S+)", re.IGNORECASE)
 GITHUB_PATTERN = re.compile(r"(https?://(?:www\.)?github\.com/\S+)", re.IGNORECASE)
 
-# Name pattern: lines at the start that look like a person's name
-NAME_PATTERN = re.compile(r"^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})$", re.MULTILINE)
+# ─── IMPROVED NAME EXTRACTION PATTERNS ─────────────────────────────────────
+
+# Words that are never part of a person's name (section headings, common words)
+_NAME_REJECT_WORDS = {
+    "resume", "curriculum", "vitae", "cv", "summary", "objective", "profile",
+    "experience", "education", "skills", "technical", "projects", "project",
+    "references", "career", "professional", "personal", "contact", "details",
+    "information", "work", "history", "qualifications", "certifications",
+    "achievements", "interests", "hobbies", "languages", "declaration",
+    "date", "address", "phone", "email", "mobile", "linkedin", "github",
+    "the", "and", "for", "about", "page", "www", "http", "https",
+}
+
+# Titles and prefixes that appear before names
+_NAME_PREFIXES = r"(?:Mr\.?|Mrs\.?|Ms\.?|Dr\.?|Prof\.?|Shri\.?)\s*"
+
+# Pattern 1: Name on its own line (very common in resumes)
+# Matches 2-4 capitalized words, optionally preceded by a title
+_NAME_LINE_PATTERN = re.compile(
+    r"^\s*(?:" + _NAME_PREFIXES + r")?"
+    r"([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+){0,3})\s*$",
+    re.MULTILINE
+)
+
+# Pattern 2: ALL-CAPS name (many resumes use this)
+_NAME_ALLCAPS_PATTERN = re.compile(
+    r"^\s*([A-Z]{2,}(?:\s+[A-Z]{2,}){1,3})\s*$",
+    re.MULTILINE
+)
+
+# Pattern 3: Name followed by contact info on next line
+_NAME_BEFORE_CONTACT = re.compile(
+    r"^\s*([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+){0,3})\s*\n\s*(?:[\w.+-]+@|[+]?\d|\(?\d{3}\)?)",
+    re.MULTILINE
+)
 
 # Experience years patterns
 EXP_PATTERNS = [
@@ -191,19 +224,109 @@ def _get_nlp():
         return None
 
 
-def _extract_name_regex(text: str) -> str:
-    """Fallback name extraction using regex heuristics."""
-    # Look for name-like patterns in the first 500 chars
-    head = text[:500]
-    # Try to find a capitalized 2-3 word name at the start of a line
-    match = NAME_PATTERN.search(head)
+def _is_valid_name(candidate: str) -> bool:
+    """Check if a candidate string looks like a real person's name."""
+    if not candidate or len(candidate) < 3:
+        return False
+
+    # Reject if it's a single word
+    words = candidate.split()
+    if len(words) < 2:
+        return False
+
+    # Reject if any word is a known section heading / reject word
+    for w in words:
+        if w.lower() in _NAME_REJECT_WORDS:
+            return False
+
+    # Reject if it contains digits
+    if any(c.isdigit() for c in candidate):
+        return False
+
+    # Reject if it contains special characters (except spaces, hyphens, apostrophes, dots)
+    if re.search(r"[^a-zA-Z\s\-\'.]+", candidate):
+        return False
+
+    # Reject if any word is too short (single char) unless it's a middle initial
+    if len(words) == 2 and any(len(w) <= 1 for w in words):
+        return False
+
+    # Reject overly long candidates (more than 5 words)
+    if len(words) > 5:
+        return False
+
+    return True
+
+
+def _extract_name_from_text(text: str) -> str:
+    """
+    Robust name extraction using multiple strategies on the first ~500 chars.
+    Strategy order:
+      1. Name right before contact info (email/phone on next line)
+      2. ALL-CAPS name at top of document
+      3. Properly capitalized 2-4 word name on its own line
+      4. spaCy PERSON entity (if available)
+    """
+    # Only look at the header portion (first 600 chars or first 15 lines)
+    lines = text.split("\n")
+    header_lines = lines[:15]
+    header = "\n".join(header_lines)
+
+    # Strategy 1: Name right before contact info
+    match = _NAME_BEFORE_CONTACT.search(header)
     if match:
         candidate = match.group(1).strip()
-        # Reject overly common words that aren't names
-        reject = {"the", "and", "for", "experience", "skills", "education",
-                  "summary", "objective", "profile", "references", "career"}
-        if candidate.lower() not in reject and len(candidate) > 3:
+        # Convert ALL-CAPS to Title Case
+        if candidate.isupper():
+            candidate = candidate.title()
+        if _is_valid_name(candidate):
             return candidate
+
+    # Strategy 2: ALL-CAPS name (very common in Indian resumes)
+    for line in header_lines[:8]:
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+        match = _NAME_ALLCAPS_PATTERN.match(line_stripped)
+        if match:
+            candidate = match.group(1).strip().title()
+            if _is_valid_name(candidate):
+                return candidate
+
+    # Strategy 3: Title-case name on its own line (first 8 non-empty lines)
+    for line in header_lines[:8]:
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+        match = _NAME_LINE_PATTERN.match(line_stripped)
+        if match:
+            candidate = match.group(1).strip()
+            if _is_valid_name(candidate):
+                return candidate
+
+    # Strategy 4: First non-empty, non-header-like line at the top
+    for line in header_lines[:5]:
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+        # Skip lines that are clearly not names
+        if "@" in line_stripped or "http" in line_stripped.lower():
+            continue
+        if re.match(r"^\+?\d", line_stripped):  # Starts with phone number
+            continue
+        # Check if it looks like a name (2-4 capitalized words)
+        words = line_stripped.split()
+        if 2 <= len(words) <= 4:
+            all_cap_or_title = all(
+                w[0].isupper() or w.isupper() for w in words if len(w) > 1
+            )
+            if all_cap_or_title:
+                candidate = line_stripped
+                if candidate.isupper():
+                    candidate = candidate.title()
+                if _is_valid_name(candidate):
+                    return candidate
+
     return ""
 
 
@@ -213,6 +336,13 @@ def extract_email(text: str) -> str:
 
 
 def extract_phone(text: str) -> str:
+    # Look in the header first (first 500 chars)
+    header = text[:500]
+    match = PHONE_PATTERN.search(header)
+    if match:
+        phone = re.sub(r"\s+", " ", match.group(0)).strip()
+        return phone
+    # Fall back to full text
     match = PHONE_PATTERN.search(text)
     if match:
         phone = re.sub(r"\s+", " ", match.group(0)).strip()
@@ -331,19 +461,23 @@ def extract_entities(text: str, anonymize_pii: bool = False) -> dict:
     """
     nlp = _get_nlp()
 
-    name = ""
+    # ─── Name extraction (multi-strategy) ───
+    name = _extract_name_from_text(text)
+
     orgs = []
 
     if nlp is not None:
         doc = nlp(text[:50000])
-        # --- Name: first PERSON entity ---
-        for ent in doc.ents:
-            if ent.label_ == "PERSON" and not name:
-                candidate = ent.text.strip()
-                words = candidate.split()
-                if 1 <= len(words) <= 5 and not any(c.isdigit() for c in candidate):
-                    name = candidate
-                    break
+
+        # If regex didn't find a name, try spaCy PERSON entities
+        if not name:
+            for ent in doc.ents:
+                if ent.label_ == "PERSON":
+                    candidate = ent.text.strip()
+                    if _is_valid_name(candidate):
+                        name = candidate
+                        break
+
         # --- Organizations ---
         orgs = list(dict.fromkeys([
             ent.text.strip()
@@ -351,8 +485,8 @@ def extract_entities(text: str, anonymize_pii: bool = False) -> dict:
             if ent.label_ == "ORG" and len(ent.text.strip()) > 2
         ]))[:10]
     else:
-        # Regex fallback for name
-        name = _extract_name_regex(text)
+        # Regex-only mode: name already extracted above
+        pass
 
     email = extract_email(text)
     phone = extract_phone(text)

@@ -4,20 +4,6 @@ import './index.css';
 
 /* ════════ Small reusable components ════════ */
 
-function Pipeline({ step = -1 }) {
-  const steps = ['📄 Parse', '🔍 Extract', '🏷️ Classify', '🧮 Embed', '📊 Match', '💡 Recommend'];
-  return (
-    <div className="pipeline">
-      {steps.map((s, i) => (
-        <span key={i}>
-          <span className={`pipeline-step${i <= step ? ' active' : ''}`}>{s}</span>
-          {i < steps.length - 1 && <span className="pipeline-arrow"> → </span>}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 function SkillTags({ skills = [], detailed = false, missing = false }) {
   if (!skills.length) return null;
   return (
@@ -36,9 +22,9 @@ function SkillTags({ skills = [], detailed = false, missing = false }) {
 
 function ATSRing({ score = 0, grade = 'F' }) {
   const color = score >= 70 ? 'var(--green)' : score >= 50 ? 'var(--amber)' : 'var(--red)';
-  const bg = score >= 70 ? 'rgba(34,197,94,0.1)' : score >= 50 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)';
+  const bg = score >= 70 ? 'rgba(34,197,94,0.08)' : score >= 50 ? 'rgba(245,158,11,0.08)' : 'rgba(239,68,68,0.08)';
   return (
-    <div>
+    <div className="ats-wrap">
       <div className="ats-ring" style={{ border: `3px solid ${color}`, background: bg }}>
         <div className="ats-score-num" style={{ color }}>{score}</div>
         <div className="ats-grade" style={{ color }}>Grade {grade}</div>
@@ -70,7 +56,7 @@ function ScoreBreakdown({ breakdown = {} }) {
   );
 }
 
-function Spinner({ text = 'Loading...' }) {
+function Spinner({ text = 'Processing...' }) {
   return (
     <div className="spinner">
       <div className="spinner-dot"></div>
@@ -101,7 +87,20 @@ function FileUpload({ onFile, accept = '.pdf,.docx,.doc', multiple = false, labe
       <input ref={ref} type="file" accept={accept} multiple={multiple} onChange={handleChange} />
       <div className="file-upload-icon">📄</div>
       <div className="file-upload-text">{fileName || (label || 'Click to upload resume')}</div>
-      <div className="file-upload-sub">Supports PDF and DOCX</div>
+      <div className="file-upload-sub">PDF or DOCX</div>
+    </div>
+  );
+}
+
+function Expandable({ title, children, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="expandable">
+      <div className="expandable-header" onClick={() => setOpen(!open)}>
+        <span>{title}</span>
+        <span className={`expandable-chevron${open ? ' open' : ''}`}>▼</span>
+      </div>
+      {open && <div className="expandable-body">{children}</div>}
     </div>
   );
 }
@@ -156,21 +155,18 @@ function SeekerDashboard({ anonymize }) {
     setLoading('');
   };
 
-  if (loading) return <><Pipeline step={loading.includes('match') ? 4 : 2} /><Spinner text={loading} /></>;
+  if (loading) return <Spinner text={loading} />;
 
   if (!profileData) {
     return (
       <div>
-        <h3 style={{ marginBottom: '1rem' }}>🎯 Job Seeker Dashboard</h3>
         <FileUpload onFile={handleUpload} />
         <div className="empty-state mt-3">
-          <div className="empty-state-icon">📄</div>
+          <div className="empty-state-icon">🎯</div>
           <div className="empty-state-title">Upload your resume to get started</div>
           <div className="empty-state-sub">
-            Our NLP pipeline will extract your profile, predict your role category,
-            compute an ATS score, and find matching jobs — all in seconds.
+            Our NLP pipeline extracts your profile, predicts role category, and computes an ATS score.
           </div>
-          <Pipeline step={-1} />
         </div>
       </div>
     );
@@ -178,17 +174,16 @@ function SeekerDashboard({ anonymize }) {
 
   const { entities, category, ats, validation } = profileData;
   const tabs = [
-    { id: 'profile', label: '📊 Profile & ATS' },
-    { id: 'match', label: '🎯 Match Analysis' },
-    { id: 'upskill', label: '📚 Upskill Path' },
-    { id: 'jobs', label: '💼 Live Jobs' },
+    { id: 'profile', label: '📊 Profile' },
+    { id: 'match', label: '🎯 Match' },
+    { id: 'upskill', label: '📚 Upskill' },
+    { id: 'jobs', label: '💼 Jobs' },
   ];
 
   return (
     <div>
-      <Pipeline step={matchData ? 5 : 3} />
       {validation?.is_valid
-        ? <div className="alert-success mb-2">✅ Valid Resume — Confidence: {validation.score}/100</div>
+        ? <div className="alert-success mb-2">✅ Valid Resume — Score: {validation.score}/100</div>
         : <div className="alert-warning mb-2">⚠️ {validation?.reason}</div>}
 
       <div className="tabs">
@@ -204,11 +199,12 @@ function SeekerDashboard({ anonymize }) {
             <div className="profile-card">
               <div className="profile-name">{entities?.name || 'Candidate'}</div>
               <div className="profile-role">
-                {entities?.job_titles?.slice(0, 2).join(', ') || category?.category?.replace(/-/g, ' ')} · {entities?.experience_years || 0}+ years
+                {entities?.job_titles?.slice(0, 2).join(', ') || category?.category?.replace(/-/g, ' ')}
+                {entities?.experience_years > 0 && ` · ${entities.experience_years}+ yrs`}
               </div>
               <div>
                 <span className="category-badge">{category?.category || 'N/A'}</span>
-                <span className="category-badge-outline">Confidence: {Math.round((category?.confidence || 0) * 100)}%</span>
+                <span className="category-badge-outline">{Math.round((category?.confidence || 0) * 100)}%</span>
               </div>
             </div>
 
@@ -218,37 +214,25 @@ function SeekerDashboard({ anonymize }) {
               <div className="metric-card"><div className="metric-value text-sm">🎓 {entities?.education?.slice(0, 2).join(', ') || 'N/A'}</div><div className="metric-label">Education</div></div>
             </div>
 
-            {entities?.links?.linkedin && <a href={entities.links.linkedin} className="job-apply" target="_blank" rel="noreferrer">🔗 LinkedIn</a>}
-            {entities?.links?.github && <a href={entities.links.github} className="job-apply" target="_blank" rel="noreferrer" style={{ marginLeft: 12 }}>💻 GitHub</a>}
+            <div className="links-row mt-1">
+              {entities?.links?.linkedin && <a href={entities.links.linkedin} className="link-btn" target="_blank" rel="noreferrer">🔗 LinkedIn</a>}
+              {entities?.links?.github && <a href={entities.links.github} className="link-btn" target="_blank" rel="noreferrer">💻 GitHub</a>}
+            </div>
 
-            {category?.top_3?.length > 0 && (
-              <div className="mt-2">
-                <div className="section-title">🏷️ Category Prediction (Top 3)</div>
-                {category.top_3.map(([name, prob]) => (
-                  <div className="score-bar" key={name}>
-                    <div className="score-bar-header"><span>{name}</span><span>{Math.round(prob * 100)}%</span></div>
-                    <div className="score-bar-track">
-                      <div className="score-bar-fill" style={{ width: `${prob * 100}%`, background: prob >= 0.3 ? '#6366f1' : '#475569' }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="section-title mt-2">🛠️ Skills Detected</div>
+            <div className="section-title mt-2">Skills</div>
             <SkillTags skills={entities?.skills_detailed || []} detailed={true} />
             {entities?.skills_detailed?.length > 0 && (
-              <div className="text-xs text-muted mt-1">
-                <span className="skill-dot dot-expert" style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%' }}></span> Expert &nbsp;
-                <span className="skill-dot dot-proficient" style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%' }}></span> Proficient &nbsp;
-                <span className="skill-dot dot-intermediate" style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%' }}></span> Intermediate &nbsp;
-                <span className="skill-dot dot-familiar" style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%' }}></span> Familiar
+              <div className="skill-legend mt-1">
+                <span><span className="skill-dot dot-expert"></span> Expert</span>
+                <span><span className="skill-dot dot-proficient"></span> Proficient</span>
+                <span><span className="skill-dot dot-intermediate"></span> Intermediate</span>
+                <span><span className="skill-dot dot-familiar"></span> Familiar</span>
               </div>
             )}
 
             {entities?.organizations?.length > 0 && (
               <>
-                <div className="section-title mt-2">🏢 Organizations</div>
+                <div className="section-title mt-2">Organizations</div>
                 <SkillTags skills={entities.organizations} />
               </>
             )}
@@ -259,7 +243,7 @@ function SeekerDashboard({ anonymize }) {
             <div className="mt-2"><ScoreBreakdown breakdown={ats?.breakdown || {}} /></div>
             {ats?.suggestions?.length > 0 && (
               <div className="mt-2">
-                <div className="section-title" style={{ fontSize: '0.9rem' }}>💡 Quick Fixes</div>
+                <div className="section-title" style={{ fontSize: '0.9rem' }}>Quick Fixes</div>
                 {ats.suggestions.slice(0, 3).map((tip, i) => (
                   <div key={i} className="text-xs text-muted" style={{ padding: '2px 0' }}>• {tip}</div>
                 ))}
@@ -274,13 +258,13 @@ function SeekerDashboard({ anonymize }) {
         <div>
           <div className="row mb-2">
             <div className="col-2">
-              <label className="text-sm text-muted">🎯 Target Role</label>
+              <label className="text-sm text-muted">Target Role</label>
               <select className="select-input mt-1" value={selectedRole} onChange={e => setSelectedRole(e.target.value)}>
                 {roles.map(r => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
             <div className="col">
-              <label className="text-sm text-muted">📍 Location</label>
+              <label className="text-sm text-muted">Location</label>
               <input className="text-input mt-1" value={location} onChange={e => setLocation(e.target.value)} />
             </div>
           </div>
@@ -288,46 +272,40 @@ function SeekerDashboard({ anonymize }) {
 
           {matchData && (
             <div>
-              {/* Gap Analysis */}
+              <div className="metrics-row mt-2">
+                <div className="metric-card"><div className="metric-value text-green">{matchData.gap?.matched_skills?.length || 0}</div><div className="metric-label">Matched</div></div>
+                <div className="metric-card"><div className="metric-value text-red">{matchData.gap?.missing_skills?.length || 0}</div><div className="metric-label">Missing</div></div>
+                <div className="metric-card"><div className="metric-value text-accent">{matchData.gap?.coverage_pct || 0}%</div><div className="metric-label">Coverage</div></div>
+              </div>
+
               <div className="row mt-2">
                 <div className="col">
-                  <div className="metrics-row">
-                    <div className="metric-card"><div className="metric-value text-green">{matchData.gap?.matched_skills?.length || 0}</div><div className="metric-label">Skills Matched</div></div>
-                    <div className="metric-card"><div className="metric-value text-red">{matchData.gap?.missing_skills?.length || 0}</div><div className="metric-label">Skills Missing</div></div>
-                    <div className="metric-card"><div className="metric-value text-accent">{matchData.gap?.coverage_pct || 0}%</div><div className="metric-label">Coverage</div></div>
-                  </div>
-                </div>
-                <div className="col-2">
                   {matchData.gap?.matched_skills?.length > 0 && <><div className="fw-700 text-sm text-green mb-1">✅ You Have:</div><SkillTags skills={matchData.gap.matched_skills} /></>}
-                  {matchData.gap?.missing_skills?.length > 0 && <><div className="fw-700 text-sm text-red mt-1 mb-1">❌ Missing:</div><SkillTags skills={matchData.gap.missing_skills} missing /></>}
+                </div>
+                <div className="col">
+                  {matchData.gap?.missing_skills?.length > 0 && <><div className="fw-700 text-sm text-red mb-1">❌ Missing:</div><SkillTags skills={matchData.gap.missing_skills} missing /></>}
                 </div>
               </div>
 
-              {/* Hybrid Score */}
               {matchData.jobs?.[0] && (
-                <>
-                  <div className="section-title">📊 Hybrid Score Breakdown (Top Match)</div>
-                  <div className="metrics-row">
-                    <div className="metric-card"><div className="metric-value" style={{ color: scoreColor(matchData.jobs[0].score) }}>{Math.round(matchData.jobs[0].score * 100)}%</div><div className="metric-label">Total Score</div></div>
-                    <div className="metric-card"><div className="metric-value text-accent">{Math.round((matchData.jobs[0].semantic_score || 0) * 100)}%</div><div className="metric-label">S-BERT Cosine (60%)</div></div>
-                    <div className="metric-card"><div className="metric-value" style={{ color: '#a78bfa' }}>{Math.round((matchData.jobs[0].skill_score || 0) * 100)}%</div><div className="metric-label">Skill Overlap (25%)</div></div>
-                    <div className="metric-card"><div className="metric-value" style={{ color: '#c084fc' }}>{Math.round((matchData.jobs[0].category_score || 0) * 100)}%</div><div className="metric-label">Category (15%)</div></div>
-                  </div>
-                </>
+                <div className="metrics-row mt-2">
+                  <div className="metric-card"><div className="metric-value" style={{ color: scoreColor(matchData.jobs[0].score) }}>{Math.round(matchData.jobs[0].score * 100)}%</div><div className="metric-label">Total Score</div></div>
+                  <div className="metric-card"><div className="metric-value text-accent">{Math.round((matchData.jobs[0].semantic_score || 0) * 100)}%</div><div className="metric-label">Semantic (60%)</div></div>
+                  <div className="metric-card"><div className="metric-value" style={{ color: '#a78bfa' }}>{Math.round((matchData.jobs[0].skill_score || 0) * 100)}%</div><div className="metric-label">Skill (25%)</div></div>
+                  <div className="metric-card"><div className="metric-value" style={{ color: '#c084fc' }}>{Math.round((matchData.jobs[0].category_score || 0) * 100)}%</div><div className="metric-label">Category (15%)</div></div>
+                </div>
               )}
 
-              {/* AI Explanation */}
               {matchData.explanation && (
                 <>
-                  <div className="section-title">🤖 AI Match Explanation</div>
+                  <div className="section-title">AI Explanation</div>
                   <div className="glass-card" dangerouslySetInnerHTML={{ __html: matchData.explanation.replace(/\n/g, '<br/>') }}></div>
                 </>
               )}
 
-              {/* Resume Feedback */}
               {matchData.resume_feedback && (
                 <>
-                  <div className="section-title">💡 AI Resume Tips</div>
+                  <div className="section-title">Resume Tips</div>
                   <div className="glass-card" dangerouslySetInnerHTML={{ __html: matchData.resume_feedback.replace(/\n/g, '<br/>') }}></div>
                 </>
               )}
@@ -341,22 +319,22 @@ function SeekerDashboard({ anonymize }) {
         <div>
           {matchData?.courses?.length > 0 ? (
             <>
-              <div className="section-title">📚 Recommended Learning Path</div>
-              <div className="text-sm text-muted mb-2">Based on {matchData.gap?.missing_skills?.length || 0} skill gaps identified.</div>
+              <div className="section-title">Recommended Learning Path</div>
+              <div className="text-sm text-muted mb-2">Based on {matchData.gap?.missing_skills?.length || 0} skill gaps.</div>
               {matchData.courses.map((item, i) => (
                 <Expandable key={i} title={`📖 ${item.skill}`}>
                   {item.courses.map((c, j) => (
                     <div key={j} style={{ padding: '4px 0' }}>
-                      🎓 <strong>{c.platform}</strong> — <a href={c.url} target="_blank" rel="noreferrer" className="job-apply">{c.title}</a>
+                      🎓 <strong>{c.platform}</strong> — <a href={c.url} target="_blank" rel="noreferrer" className="link-btn">{c.title}</a>
                     </div>
                   ))}
                 </Expandable>
               ))}
             </>
           ) : matchData ? (
-            <div className="alert-success">🎉 No skill gaps identified — you're fully covered!</div>
+            <div className="alert-success">🎉 No skill gaps — you're fully covered!</div>
           ) : (
-            <div className="alert-info">👆 Run the Match Analysis first to see your personalized upskill path.</div>
+            <div className="alert-info">Run the Match Analysis first to see your upskill path.</div>
           )}
         </div>
       )}
@@ -366,16 +344,15 @@ function SeekerDashboard({ anonymize }) {
         <div>
           {matchData?.jobs?.length > 0 ? (
             <>
-              <div className="section-title">💼 Live Job Matches</div>
-              {matchData.jobs.slice(0, 6).map((job, i) => (
+              <div className="section-title">Job Matches ({matchData.jobs.length})</div>
+              {matchData.jobs.slice(0, 10).map((job, i) => (
                 <div className="job-card" key={i}>
                   <div>
                     <div className="job-title">{job.job_title}</div>
-                    <div className="job-meta">🏢 {job.employer_name} · 📍 {job.job_city} · {(job.job_employment_type || '').replace(/_/g, ' ')}</div>
-                    <div className="job-date">📅 {job.job_posted_at?.split('T')[0] || job.job_posted_at}</div>
-                    <a href={job.job_apply_link} target="_blank" rel="noreferrer" className="job-apply">🔗 Apply Now</a>
+                    <div className="job-meta">🏢 {job.employer_name} · 📍 {job.job_city}</div>
+                    <a href={job.job_apply_link} target="_blank" rel="noreferrer" className="link-btn">Apply →</a>
                   </div>
-                  <div>
+                  <div style={{ textAlign: 'right' }}>
                     <div className="job-score" style={{ color: job.color }}>{Math.round(job.score * 100)}%</div>
                     <div className="job-score-label" style={{ color: job.color }}>{job.label}</div>
                   </div>
@@ -383,25 +360,10 @@ function SeekerDashboard({ anonymize }) {
               ))}
             </>
           ) : (
-            <div className="alert-info">👆 Run the Match Analysis to discover live job opportunities.</div>
+            <div className="alert-info">Run Match Analysis to discover job opportunities.</div>
           )}
         </div>
       )}
-    </div>
-  );
-}
-
-/* ════════ Expandable ════════ */
-
-function Expandable({ title, children, defaultOpen = false }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="expandable">
-      <div className="expandable-header" onClick={() => setOpen(!open)}>
-        <span>{title}</span>
-        <span className={`expandable-chevron${open ? ' open' : ''}`}>▼</span>
-      </div>
-      {open && <div className="expandable-body">{children}</div>}
     </div>
   );
 }
@@ -430,50 +392,43 @@ function RecruiterDashboard({ anonymize }) {
     setLoading('');
   };
 
-  if (loading) return <><Pipeline step={4} /><Spinner text={loading} /></>;
+  if (loading) return <Spinner text={loading} />;
 
   return (
     <div>
-      <h3 style={{ marginBottom: '0.5rem' }}>🏢 Recruiter Dashboard</h3>
-      <p className="text-sm text-muted mb-2">Paste a job description, upload candidate resumes, and rank them by hybrid semantic fit.</p>
-
       <div className="row mb-2">
         <div className="col">
-          <label className="text-sm text-muted mb-1" style={{ display: 'block' }}>📋 Job Description</label>
-          <textarea className="text-area" placeholder="e.g. We are looking for a Senior Python Developer with 5+ years in Django, REST APIs, Docker, and AWS..." value={jd} onChange={e => setJd(e.target.value)} />
+          <label className="text-sm text-muted mb-1" style={{ display: 'block' }}>Job Description</label>
+          <textarea className="text-area" placeholder="Paste the job description here..." value={jd} onChange={e => setJd(e.target.value)} />
         </div>
         <div className="col">
-          <label className="text-sm text-muted mb-1" style={{ display: 'block' }}>📂 Candidate Resumes</label>
-          <FileUpload onFile={setFiles} multiple label="Click to upload resumes (multiple)" />
+          <label className="text-sm text-muted mb-1" style={{ display: 'block' }}>Candidate Resumes</label>
+          <FileUpload onFile={setFiles} multiple label="Upload resumes (multiple)" />
         </div>
       </div>
 
       <div className="row mb-2 gap-8">
         <div className="col">
-          <label className="text-sm text-muted">🎯 Role Category</label>
+          <label className="text-sm text-muted">Role Category</label>
           <select className="select-input mt-1" value={targetRole} onChange={e => setTargetRole(e.target.value)}>
             {roles.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
         </div>
         <div className="col">
-          <button className="btn-primary mt-2" onClick={handleRank} disabled={!jd || !files.length}>🏃 Rank Candidates</button>
+          <button className="btn-primary mt-2" onClick={handleRank} disabled={!jd || !files.length}>Rank Candidates</button>
         </div>
       </div>
 
       {result && (
         <div>
-          <Pipeline step={5} />
           <hr className="divider" />
-
-          <div className="section-title">🏆 Candidate Ranking</div>
           <div className="metrics-row">
             <div className="metric-card"><div className="metric-value">{result.total}</div><div className="metric-label">Total</div></div>
-            <div className="metric-card"><div className="metric-value text-green">{result.shortlisted}</div><div className="metric-label">Shortlisted (≥70%)</div></div>
+            <div className="metric-card"><div className="metric-value text-green">{result.shortlisted}</div><div className="metric-label">Shortlisted</div></div>
             <div className="metric-card"><div className="metric-value text-accent">{Math.round(result.top_score * 100)}%</div><div className="metric-label">Top Score</div></div>
             <div className="metric-card"><div className="metric-value">{Math.round(result.avg_score * 100)}%</div><div className="metric-label">Avg Score</div></div>
           </div>
 
-          {/* Table */}
           <table className="data-table">
             <thead>
               <tr>
@@ -496,9 +451,8 @@ function RecruiterDashboard({ anonymize }) {
             </tbody>
           </table>
 
-          {/* Bar Chart */}
-          <div className="section-title">📊 Score Comparison</div>
-          <div className="bar-chart" style={{ position: 'relative' }}>
+          <div className="section-title">Score Comparison</div>
+          <div className="bar-chart">
             {result.candidates.map((c, i) => (
               <div className="bar-chart-col" key={i}>
                 <div className="bar-chart-value" style={{ color: c.color }}>{Math.round(c.match_score * 100)}%</div>
@@ -511,20 +465,19 @@ function RecruiterDashboard({ anonymize }) {
             ))}
           </div>
 
-          {/* Deep Dives */}
-          <div className="section-title">🔍 Candidate Deep Dives</div>
+          <div className="section-title">Candidate Details</div>
           {result.candidates.map((c, i) => (
-            <Expandable key={i} title={`${c.shortlisted ? '✅' : '❌'} ${c.name} — ${Math.round(c.match_score * 100)}% | ATS: ${c.ats_score} | ${c.predicted_category}`} defaultOpen={i === 0}>
+            <Expandable key={i} title={`${c.shortlisted ? '✅' : '❌'} ${c.name} — ${Math.round(c.match_score * 100)}% | ATS: ${c.ats_score}`} defaultOpen={i === 0}>
               <div className="row">
                 <div className="col">
                   <ATSRing score={c.ats_score} grade={c.ats_grade} />
                 </div>
                 <div className="col-2">
-                  <p className="text-sm">📧 <strong>Email:</strong> {c.email || 'N/A'}</p>
-                  <p className="text-sm">🎓 <strong>Education:</strong> {c.education?.join(', ') || 'N/A'}</p>
-                  <p className="text-sm">🏷️ <strong>Category:</strong> {c.predicted_category}</p>
-                  <p className="text-sm">⏱️ <strong>Experience:</strong> {c.experience_years} years</p>
-                  {c.skills?.length > 0 && <><div className="fw-700 text-sm mt-1">🛠️ Skills:</div><SkillTags skills={c.skills} /></>}
+                  <p className="text-sm">📧 {c.email || 'N/A'}</p>
+                  <p className="text-sm">🎓 {c.education?.join(', ') || 'N/A'}</p>
+                  <p className="text-sm">🏷️ {c.predicted_category}</p>
+                  <p className="text-sm">⏱️ {c.experience_years} years</p>
+                  {c.skills?.length > 0 && <><div className="fw-700 text-sm mt-1">Skills:</div><SkillTags skills={c.skills} /></>}
                 </div>
               </div>
 
@@ -539,7 +492,7 @@ function RecruiterDashboard({ anonymize }) {
 
               {c.ai_explanation && (
                 <div className="mt-2">
-                  <div className="fw-700 text-sm mb-1">🤖 AI Explanation:</div>
+                  <div className="fw-700 text-sm mb-1">AI Explanation:</div>
                   <div className="glass-card" dangerouslySetInnerHTML={{ __html: c.ai_explanation.replace(/\n/g, '<br/>') }}></div>
                 </div>
               )}
@@ -572,7 +525,7 @@ export default function App() {
         <div className="sidebar-brand">
           <div className="sidebar-brand-icon">🧠</div>
           <div className="sidebar-brand-name">ResumeIQ</div>
-          <div className="sidebar-brand-sub">Intelligent Resume Screening v2.0</div>
+          <div className="sidebar-brand-sub">Smart Resume Screening</div>
         </div>
 
         <hr className="sidebar-divider" />
@@ -583,12 +536,12 @@ export default function App() {
         <hr className="sidebar-divider" />
         <div className="sidebar-label">Settings</div>
         <div className="toggle-row">
-          <span className="toggle-label">🙈 Blind Screening</span>
+          <span className="toggle-label">🙈 Blind Mode</span>
           <div className={`toggle-switch${anonymize ? ' on' : ''}`} onClick={() => setAnonymize(!anonymize)}></div>
         </div>
 
         <hr className="sidebar-divider" />
-        <div className="sidebar-label">Recent Sessions</div>
+        <div className="sidebar-label">Recent</div>
         {history.length > 0 ? (
           <>
             {history.slice(0, 5).map((h, i) => (
@@ -603,14 +556,16 @@ export default function App() {
 
       {/* ── Main ── */}
       <main className="main-content">
-        <div className="hero-header">Intelligent Resume Screening<br />& Job Recommendation</div>
-        <div className="hero-sub">Powered by S-BERT (all-mpnet-base-v2) · spaCy NER · TF-IDF + Random Forest · Gemini AI · Cosine Similarity</div>
+        <div className="hero-header">
+          {mode === 'seeker' ? 'Resume Screening & Job Match' : 'Candidate Ranking Dashboard'}
+        </div>
+        <div className="hero-sub">S-BERT Semantic Matching · NER Extraction · ATS Scoring</div>
         <hr className="divider" />
 
         {mode === 'seeker' ? <SeekerDashboard anonymize={anonymize} /> : <RecruiterDashboard anonymize={anonymize} />}
 
         <div className="footer">
-          🧠 <strong>ResumeIQ</strong> v2.0 · S-BERT (all-mpnet-base-v2, 768-D) + TF-IDF + spaCy NER + Cosine Similarity · Research Paper Implementation
+          <strong>ResumeIQ</strong> · S-BERT (all-mpnet-base-v2) · spaCy NER · Cosine Similarity
         </div>
       </main>
     </div>
